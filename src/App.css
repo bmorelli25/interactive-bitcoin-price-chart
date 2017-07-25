@@ -1,0 +1,24 @@
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  padding: 0;
+  margin: 0;
+  font-weight: 700;
+  color: #757575;
+}
+
+#coindesk {
+  font-weight: 300;
+}
+
+#coindesk a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.popup {
+  min-height: 50px;
+}
