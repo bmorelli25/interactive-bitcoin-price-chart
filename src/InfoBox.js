@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import rp from 'request-promise';
 import moment from 'moment';
 import './InfoBox.css';
 
@@ -14,28 +13,26 @@ class InfoBox extends Component {
     }
   }
   componentDidMount(){
-    this.getData = async () => {
+    this.getData = () => {
       const {data} = this.props;
-      const livePrices = {
-        uri: `http://api.coindesk.com/v1/bpi/currentprice.json`,
-        json: true
-      }
+      const url = 'https://api.coindesk.com/v1/bpi/currentprice.json';
 
-      try {
-        const bitcoinData = await rp(livePrices);
-        const price = bitcoinData.bpi.USD.rate_float;
-        const change = price - data[0].y;
-        const changeP = (price - data[0].y) / data[0].y * 100;
+      fetch(url).then(r => r.json())
+        .then((bitcoinData) => {
+          const price = bitcoinData.bpi.USD.rate_float;
+          const change = price - data[0].y;
+          const changeP = (price - data[0].y) / data[0].y * 100;
 
-        this.setState({
-          currentPrice: bitcoinData.bpi.USD.rate_float,
-          monthChangeD: change.toLocaleString('us-EN',{ style: 'currency', currency: 'USD' }),
-          monthChangeP: changeP.toFixed(2) + '%',
-          updatedAt: bitcoinData.time.updated
+          this.setState({
+            currentPrice: bitcoinData.bpi.USD.rate_float,
+            monthChangeD: change.toLocaleString('us-EN',{ style: 'currency', currency: 'USD' }),
+            monthChangeP: changeP.toFixed(2) + '%',
+            updatedAt: bitcoinData.time.updated
+          })
         })
-      } catch(e) {
-        console.log(e);
-      }
+        .catch((e) => {
+          console.log(e);
+        });
     }
     this.getData();
     this.refresh = setInterval(() => this.getData(), 90000);

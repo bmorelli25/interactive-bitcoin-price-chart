@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import rp from 'request-promise';
 import moment from 'moment';
 import './App.css';
 import LineChart from './LineChart';
@@ -23,32 +22,30 @@ class App extends Component {
     })
   }
   componentDidMount(){
-    const getData = async () => {
-      const historicalPrices = {
-        uri: `http://api.coindesk.com/v1/bpi/historical/close.json`,
-        json: true
-      }
-      try {
-        const bitcoinData = await rp(historicalPrices);
-        const sortedData = [];
-        let count = 0;
-        for (let date in bitcoinData.bpi){
-          sortedData.push({
-            d: moment(date).format('MMM DD'),
-            p: bitcoinData.bpi[date].toLocaleString('us-EN',{ style: 'currency', currency: 'USD' }),
-            x: count, //previous days
-            y: bitcoinData.bpi[date] // numerical price
-          });
-          count++;
-        }
-        this.setState({
-          data: sortedData,
-          fetchingData: false
+    const getData = () => {
+      const url = 'https://api.coindesk.com/v1/bpi/historical/close.json';
+
+      fetch(url).then( r => r.json())
+        .then((bitcoinData) => {
+          const sortedData = [];
+          let count = 0;
+          for (let date in bitcoinData.bpi){
+            sortedData.push({
+              d: moment(date).format('MMM DD'),
+              p: bitcoinData.bpi[date].toLocaleString('us-EN',{ style: 'currency', currency: 'USD' }),
+              x: count, //previous days
+              y: bitcoinData.bpi[date] // numerical price
+            });
+            count++;
+          }
+          this.setState({
+            data: sortedData,
+            fetchingData: false
+          })
         })
-      }
-      catch(e){
-        console.log(e);
-      }
+        .catch((e) => {
+          console.log(e);
+        });
     }
     getData();
   }
