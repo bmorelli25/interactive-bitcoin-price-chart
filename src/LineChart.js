@@ -124,27 +124,45 @@ class LineChart extends Component {
       });
     });
 
-    let closestPoint = {};
+    let closestPoint = {}
 
     var start = 0
     var end = svgData.length - 1
     var target = this.state.hoverLoc
-    if (target) {
+
+    const binarySearch = (data, start, end, target) => {
+      var toReturn = {}
+      if (target >= data[end].svgX) {
+        return data[end]
+      } else if (target <= data[start].svgX) {
+        return data[start]
+      }
+
       while (start <= end) {
         const middle = (start + end) / 2
-        const point = svgData[middle]
 
-        if (point.svgX < target) {
-          closestPoint = svgData[middle]
-          start = middle + 1
+        const point = data[middle]
 
-        } else {
-          closestPoint = svgData[middle]
+        if (target < point.svgX) {
           end = middle - 1
+
+        } else if (target >= point.svgX) {
+          start = middle + 1
+        } else {
+          return data[middle]
         }
       }
+
+      toReturn = Math.abs(data[start].svgX - target) > Math.abs(data[end].svgX - target)
+        ? data[end]
+        : data[start]
+
+      return toReturn
     }
 
+    if (target) {
+      closestPoint = binarySearch(svgData, start, end, target)
+    }
 
     if (relativeLoc - yLabelSize < 0) {
       this.stopHover();
