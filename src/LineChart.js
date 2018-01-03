@@ -41,7 +41,7 @@ class LineChart extends Component {
 
     pathD += data.map((point, i) => {
       return "L " + this.getSvgX(point.x) + " " + this.getSvgY(point.y) + " ";
-    });
+    }).join("");
 
     return (
       <path className="linechart_path" d={pathD} style={{stroke: color}} />
@@ -54,7 +54,7 @@ class LineChart extends Component {
 
     pathD += data.map((point, i) => {
       return "L " + this.getSvgX(point.x) + " " + this.getSvgY(point.y) + " ";
-    });
+    }).join("");
 
     const x = this.getX();
     const y = this.getY();
